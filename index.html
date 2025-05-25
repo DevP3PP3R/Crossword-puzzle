@@ -24,6 +24,18 @@
       box-sizing: border-box;
     }
 
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
     body {
       font-family: 'Noto Sans KR', sans-serif;
       display: flex;
@@ -243,6 +255,7 @@
   </style>
 </head>
 <body>
+  <p class="sr-only">O Yun님이 제공해주신 십자말풀이입니다.:) 코드로 작성해서 배포해봤습니다.</p>
   <h2>앳원스 십자말풀이 1호</h2>
   <table id="puzzle"></table>
   
