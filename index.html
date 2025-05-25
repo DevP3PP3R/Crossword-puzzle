@@ -6,6 +6,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
     :root {
       --primary-color: #4A90E2;
@@ -355,7 +356,53 @@
         }
         index++;
       }
+
+      // 모든 정답이 공개되었는지 확인
+      checkAllAnswersRevealed();
+      
       return allCells;
+    }
+
+    function checkAllAnswersRevealed() {
+      const allAnswerCells = document.querySelectorAll('td.blank .answer');
+      const allRevealed = Array.from(allAnswerCells).every(cell => cell.classList.contains('show'));
+      
+      if (allRevealed) {
+        celebrateCompletion();
+      }
+    }
+
+    function celebrateCompletion() {
+      // 컨페티 애니메이션 설정
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        // 왼쪽에서 발사
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        }));
+        
+        // 오른쪽에서 발사
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        }));
+      }, 250);
     }
 
     // 특정 셀이 정답이 표시되어 있는지 확인하는 함수
