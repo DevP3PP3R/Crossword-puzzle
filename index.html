@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>십자말풀이</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4A90E2;
+      --secondary-color: #F5A623;
+      --background-color: #F8F9FA;
+      --border-color: #E9ECEF;
+      --text-color: #212529;
+      --grid-color: #DEE2E6;
+      --block-color: #E9ECEF;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Noto Sans KR', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+      min-height: 100vh;
+      background: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+      color: var(--primary-color);
+      text-align: center;
+      letter-spacing: -0.5px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    table {
+      border-collapse: collapse;
+      margin-bottom: 3rem;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 8px 30px var(--shadow-color);
+    }
+
+    td {
+      width: 48px;
+      height: 48px;
+      border: 1px solid var(--grid-color);
+      text-align: center;
+      vertical-align: middle;
+      font-size: 20px;
+      cursor: pointer;
+      position: relative;
+      background: white;
+      transition: all 0.3s ease;
+    }
+
+    td.blank {
+      background: white;
+    }
+
+    td.blank:hover {
+      background: rgba(74, 144, 226, 0.1);
+    }
+
+    td .num {
+      position: absolute;
+      font-size: 12px;
+      top: 2px;
+      left: 2px;
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    td .num.both {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    td .num.vertical {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    td .answer {
+      display: none;
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    td .answer.show {
+      display: block;
+      animation: fadeInScale 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .answer-buttons {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      z-index: 100;
+      min-width: 240px;
+    }
+
+    .answer-buttons.show {
+      display: flex;
+      animation: fadeInModal 0.3s ease-out;
+    }
+
+    .answer-buttons button {
+      padding: 12px 24px;
+      font-size: 16px;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: white;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.2s ease;
+      color: var(--text-color);
+    }
+
+    .answer-buttons button:hover {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      color: white;
+      transform: translateY(-1px);
+    }
+
+    .hints {
+      width: 100%;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 40px;
+      padding: 20px;
+    }
+
+    .hints > div {
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px var(--shadow-color);
+    }
+
+    .hints h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--primary-color);
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .hints ol {
+      padding-left: 24px;
+      counter-reset: hint-counter;
+    }
+
+    .hints li {
+      margin-bottom: 1rem;
+      line-height: 1.6;
+      position: relative;
+      padding-left: 8px;
+    }
+
+    .hints li::marker {
+      color: var(--primary-color);
+      font-weight: 500;
+    }
+
+    @keyframes fadeInScale {
+      0% {
+        opacity: 0;
+        transform: scale(0.8);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    @keyframes fadeInModal {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, -48%) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 2rem;
+      }
+
+      td {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+
+      .hints {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>오윤님의 십자말풀이 1호</h2>
+  <table id="puzzle"></table>
+  
+  <div class="answer-buttons" id="answerButtons">
+    <button id="horizontalBtn">가로 정답 보기</button>
+    <button id="verticalBtn">세로 정답 보기</button>
+  </div>
+
+  <div class="hints">
+    <div class="across">
+      <h3>가로 문제</h3>
+      <ol>
+        <li>최한진 선수님의 별명 중 하나, 신생아에게도 방금 태어나셨어요? 인사하신다는.</li>
+        <li>마디오스타에 등장한 DJ 후추님의 자작곡 이름</li>
+        <li>마선호 선수님의 별명</li>
+        <li>Don't delay. Start today. 건강한 가치를 추구하는 이 곳, 커뮤니티의 이름</li>
+        <li>보디빌딩 대회에서 전 체급 1위를 일컫는 말, 그랑프리라고도 표현하기도 한다고 합니다.</li>
+        <li>2025년 몬스터짐 대회가 열린 지역 이름</li>
+        <li>작년에 이어 마선호 선수님이 대회장으로 있는 보디빌딩 대회 이름</li>
+        <li>"OOO, 잘 봐봐"</li>
+      </ol>
+    </div>
+    <div class="down">
+      <h3>세로 문제</h3>
+      <ol>
+        <li>최대 심박수의 약 60~70%에 해당하는 유산소 운동 구간으로, 지방 연소에 가장 효과적이라고 알려져있음</li>
+        <li>임금체불의 어려움 속에서도 굴하지않는 일타강사 마이클쌤의 원포인트 레슨 컨텐츠</li>
+        <li>운동 시 관절이나 근육이 움직일 수 있는 범위</li>
+        <li>카페 매니저님 닉네임 중 하나, 쿼카피디님이 귀여운 느낌으로 만들어주셨다고 합니다.</li>
+        <li>나날이 일취월장하는 그림 실력을 지닌!! 그림 순위 225위 안에 드는!! 앳원스의 키보드워리어 회원</li>
+        <li>봉투대표님의 유튜브 채널 이름</li>
+        <li>웃는 모습이 매력적인, 최근 몬스터짐대회에서 당당히 IFBB PRO 카드를 거머쥔 앳원스의 막둥이 선수님</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    const answers = {
+      'h1': ['존', '중', '맨'],
+      'h2': ['울', '등', '가'],
+      'h3': ['마', '왕'],
+      'h4': ['앳', '원', '스'],
+      'h5': ['오', '버', '롤'],
+      'h6': ['광', '명'],
+      'h7': ['몬', '스', '터', '짐'],
+      'h8': ['혜', '정', '아'],
+      'v1': ['존', '투'],
+      'v2': ['일', '마', '원'],
+      'v3': ['가', '동', '범', '위'],
+      'v4': ['앳', '몽', '이'],
+      'v5': ['오', '윤'],
+      'v6': ['짐', '종', '국'],
+      'v7': ['명', '민', '정']
+    };
+
+    const grid = [
+      [{num: '1', h: '1', v: '1'}, {blank: true}, {blank: true}, {block: true}, {num: '2', h: '2'}, {blank: true}, {num: '3', h: '', v: '3'}, {block: true}, {block: true}, {block: true}, {block: true}],
+      [{blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}],
+      [{block: true}, {block: true}, {block: true}, {num: '2', v: '2'}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}],
+      [{block: true}, {block: true}, {block: true}, {num: '3', h: '3'}, {blank: true}, {block: true}, {blank: true},  {block: true}, {num: '5', h: '5', v: '5'}, {blank: true}, {blank: true}],
+      [{block: true}, {block: true}, {num: '4', h: '4', v: '4'}, {blank: true}, {blank: true},  {block: true}, {block: true}, {block: true},{blank: true},  {block: true}, {block: true}, ],
+      [{block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true},{block: true}],
+      [{block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {num: '6', h: '6'}, {num: '7', v: '7'}, {block: true}],
+      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}],
+      [{block: true}, {block: true}, {num: '7', h: '7'},  {blank: true}, {blank: true}, {num: '6', v: '6'},{block: true}, {block: true},  {num: '8', h: '8'}, {blank: true}, {blank: true}],
+      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}],
+      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}]
+    ];
+
+    function showAnswer(cell, type, num) {
+      const answer = answers[type + num];
+      if (!answer) return;
+      
+      let currentCell = cell;
+      let index = 0;
+      let allCells = [];
+      
+      while (currentCell && index < answer.length) {
+        const answerSpan = currentCell.querySelector('.answer');
+        if (answerSpan) {
+          answerSpan.textContent = answer[index];
+          answerSpan.classList.add('show');
+          allCells.push(currentCell);
+        }
+        
+        if (type === 'h') {
+          currentCell = currentCell.nextElementSibling;
+        } else {
+          const currentRow = currentCell.parentElement;
+          const cellIndex = Array.from(currentRow.children).indexOf(currentCell);
+          const nextRow = currentRow.nextElementSibling;
+          if (nextRow) {
+            currentCell = nextRow.children[cellIndex];
+          } else {
+            currentCell = null;
+          }
+        }
+        index++;
+      }
+      return allCells;
+    }
+
+    // 특정 셀이 정답이 표시되어 있는지 확인하는 함수
+    function hasShownAnswer(cell) {
+      const answerSpan = cell.querySelector('.answer');
+      return answerSpan && answerSpan.classList.contains('show');
+    }
+
+    // 해당 셀과 연결된 모든 정답 셀 찾기
+    function findConnectedCells(startCell, type, num) {
+      const cells = [];
+      let currentCell = startCell;
+      
+      if (type === 'h') {
+        // 가로 방향으로 이동하면서 빈칸 찾기
+        while (currentCell && currentCell.classList.contains('blank')) {
+          cells.push(currentCell);
+          currentCell = currentCell.nextElementSibling;
+        }
+      } else {
+        // 세로 방향으로 이동하면서 빈칸 찾기
+        const currentRow = currentCell.parentElement;
+        const cellIndex = Array.from(currentRow.children).indexOf(currentCell);
+        let row = currentRow;
+        
+        while (row) {
+          const cell = row.children[cellIndex];
+          if (cell && cell.classList.contains('blank')) {
+            cells.push(cell);
+            row = row.nextElementSibling;
+          } else {
+            break;
+          }
+        }
+      }
+      
+      return cells;
+    }
+
+    const puzzle = document.getElementById('puzzle');
+    const answerButtons = document.getElementById('answerButtons');
+    const horizontalBtn = document.getElementById('horizontalBtn');
+    const verticalBtn = document.getElementById('verticalBtn');
+
+    let currentCell = null;
+
+    horizontalBtn.addEventListener('click', () => {
+      if (currentCell && currentCell.h) {
+        showAnswer(currentCell.element, 'h', currentCell.h);
+      }
+      answerButtons.classList.remove('show');
+    });
+
+    verticalBtn.addEventListener('click', () => {
+      if (currentCell && currentCell.v) {
+        showAnswer(currentCell.element, 'v', currentCell.v);
+      }
+      answerButtons.classList.remove('show');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!answerButtons.contains(e.target) && 
+          !e.target.classList.contains('blank')) {
+        answerButtons.classList.remove('show');
+      }
+    });
+
+    function getNumberDisplay(cell) {
+      if (cell.h && cell.v) {
+        // 가로/세로 모두 있는 경우
+        return '❶❷❸❹❺❻❼❽'[parseInt(cell.num) - 1];
+      } else if (cell.v) {
+        // 세로만 있는 경우
+        return '①②③④⑤⑥⑦⑧'[parseInt(cell.num) - 1];
+      }
+      // 가로만 있는 경우 그냥 숫자 반환
+      return cell.num;
+    }
+
+    grid.forEach((row, y) => {
+      const tr = document.createElement('tr');
+      row.forEach((cell, x) => {
+        const td = document.createElement('td');
+        
+        if (cell.block) {
+          td.style.background = '#eee';
+        } else {
+          td.classList.add('blank');
+          
+          if (cell.num) {
+            const num = document.createElement('div');
+            num.className = 'num';
+            if (cell.h && cell.v) {
+              num.classList.add('both');
+            } else if (cell.v) {
+              num.classList.add('vertical');
+            }
+            num.innerText = getNumberDisplay(cell);
+            td.appendChild(num);
+          }
+          
+          const answer = document.createElement('div');
+          answer.className = 'answer';
+          td.appendChild(answer);
+
+          td.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            if (cell.h && cell.v) {
+              // 가로, 세로 모두 있는 경우
+              // 이미 한쪽이 공개되어 있는지 확인
+              const hasHorizontal = hasShownAnswer(td) && findConnectedCells(td, 'h', cell.h).every(hasShownAnswer);
+              const hasVertical = hasShownAnswer(td) && findConnectedCells(td, 'v', cell.v).every(hasShownAnswer);
+              
+              if (hasHorizontal && !hasVertical) {
+                // 가로만 공개된 경우 세로 자동 공개
+                showAnswer(td, 'v', cell.v);
+              } else if (!hasHorizontal && hasVertical) {
+                // 세로만 공개된 경우 가로 자동 공개
+                showAnswer(td, 'h', cell.h);
+              } else if (!hasHorizontal && !hasVertical) {
+                // 둘 다 공개되지 않은 경우 선택 버튼 표시
+                currentCell = {
+                  element: td,
+                  h: cell.h,
+                  v: cell.v
+                };
+                answerButtons.classList.add('show');
+              }
+            } else if (cell.h) {
+              // 가로만 있는 경우
+              showAnswer(td, 'h', cell.h);
+            } else if (cell.v) {
+              // 세로만 있는 경우
+              showAnswer(td, 'v', cell.v);
+            } else {
+              // 빈칸인 경우 연결된 정답 찾기
+              let found = false;
+              
+              // 왼쪽으로 이동하며 가로 번호 찾기
+              let current = td;
+              while (current = current.previousElementSibling) {
+                if (current.classList.contains('blank')) {
+                  const num = current.querySelector('.num');
+                  if (num && grid[y][Array.from(tr.children).indexOf(current)].h) {
+                    showAnswer(current, 'h', grid[y][Array.from(tr.children).indexOf(current)].h);
+                    found = true;
+                    break;
+                  }
+                } else break;
+              }
+              
+              // 위로 이동하며 세로 번호 찾기
+              if (!found) {
+                let currentRow = tr;
+                const cellIndex = Array.from(tr.children).indexOf(td);
+                while (currentRow = currentRow.previousElementSibling) {
+                  const cell = currentRow.children[cellIndex];
+                  if (cell.classList.contains('blank')) {
+                    const num = cell.querySelector('.num');
+                    if (num) {
+                      const rowIndex = Array.from(puzzle.children).indexOf(currentRow);
+                      if (grid[rowIndex][cellIndex].v) {
+                        showAnswer(cell, 'v', grid[rowIndex][cellIndex].v);
+                        break;
+                      }
+                    }
+                  } else break;
+                }
+              }
+            }
+          });
+        }
+        
+        tr.appendChild(td);
+      });
+      puzzle.appendChild(tr);
+    });
+  </script>
+</body>
+</html>
