@@ -253,16 +253,65 @@
       font-size: 14px;
       padding: 20px;
     }
+
+    .secret-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+
+    .secret-modal.show {
+      opacity: 1;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      text-align: center;
+      max-width: 90%;
+      max-height: 90vh;
+      position: relative;
+    }
+
+    .modal-content img {
+      max-width: 100%;
+      max-height: 70vh;
+      object-fit: contain;
+    }
+
+    .modal-text {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+      color: var(--primary-color);
+    }
   </style>
 </head>
 <body>
-  <p class="sr-only">O Yun님이 제공해주신 십자말풀이입니다.:) 코드로 작성해서 배포해봤습니다.</p>
+  <p class="sr-only">O Yun님이 제공해주신 십자말풀이입니다.:)</p>
   <h2>앳원스 십자말풀이 1호</h2>
   <table id="puzzle"></table>
   
   <div class="answer-buttons" id="answerButtons">
     <button id="horizontalBtn">가로 정답 보기</button>
     <button id="verticalBtn">세로 정답 보기</button>
+  </div>
+
+  <div class="secret-modal" id="secretModal">
+    <div class="modal-content">
+      <img src="https://pbs.twimg.com/media/GrzWfTuXMAA_UO-?format=jpg&name=4096x4096" alt="축하 이미지">
+      <div class="modal-text">장규진 생일축하해</div>
+    </div>
   </div>
 
   <div class="hints">
@@ -326,9 +375,68 @@
       [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}]
     ];
 
+    let secretSequence = [];
+    const correctSequence = ['5', '2', '6'];  // 순서: 5번(오버롤/오윤) -> 2번(울등가/일마원) -> 6번(광명/짐종국)
+
+    function checkSecretSequence() {
+      if (secretSequence.length === 3) {
+        if (JSON.stringify(secretSequence) === JSON.stringify(correctSequence)) {
+          showSecretModal();
+        }
+        secretSequence = [];
+      }
+    }
+
+    function showSecretModal() {
+      const modal = document.getElementById('secretModal');
+      modal.style.display = 'flex';
+      setTimeout(() => modal.classList.add('show'), 10);
+
+      // 컨페티 애니메이션
+      const duration = 3000;
+      const animationEnd = Date.now() + duration;
+      const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1001 };
+
+      function randomInRange(min, max) {
+        return Math.random() * (max - min) + min;
+      }
+
+      const interval = setInterval(function() {
+        const timeLeft = animationEnd - Date.now();
+
+        if (timeLeft <= 0) {
+          return clearInterval(interval);
+        }
+
+        const particleCount = 50 * (timeLeft / duration);
+        
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+        }));
+        
+        confetti(Object.assign({}, defaults, {
+          particleCount,
+          origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+        }));
+      }, 250);
+
+      // 3초 후 모달 닫기
+      setTimeout(() => {
+        modal.classList.remove('show');
+        setTimeout(() => {
+          modal.style.display = 'none';
+        }, 1000);
+      }, 3000);
+    }
+
     function showAnswer(cell, type, num) {
       const answer = answers[type + num];
       if (!answer) return;
+      
+      // 가로 세로 구분 없이 번호만 체크
+      secretSequence.push(num);
+      checkSecretSequence();
       
       let currentCell = cell;
       let index = 0;
