@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>앳원스 십자말풀이 2호</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles/puzzle.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <a href="index.html" class="home-link">← 홈으로</a>
+    <p class="sr-only">준비 중인 십자말풀이입니다.</p>
+    <h2>앳원스 십자말풀이 2호</h2>
+    <table id="puzzle"></table>
+    
+    <div class="answer-buttons" id="answerButtons">
+      <button id="horizontalBtn">가로 정답 보기</button>
+      <button id="verticalBtn">세로 정답 보기</button>
+    </div>
+
+    <div class="hints">
+      <div class="across">
+        <h3>가로 문제</h3>
+        <ol>
+          <li>매주 일요일 저녁 8시부터 10시까지 유튜브 마선호 채널에서 진행되는 보이는 라디오</li>
+          <li>올해 5월, 명민정 선수님이 비키니 초대 챔피언이 되신 보디빌딩 대회</li>
+          <li>지난주 가명(?)이 공개된 앳원스 종혁피디님의 별명</li>
+          <li>사랑스러운 민정선수님의 천연가스 공장 가동 주 원료인 구황작물</li>
+          <li>마선호 선수님이 만 35세에 최연소(?)로 받아 이어오신 교회에서의 직분</li>
+          <li>동식물성의 균형잡힌 단백질, 흡수 빠른 100% WPI 세계 최고 프로틴</li>
+          <li>존중맨 한진선수님이 대한민국 내추럴 선수 최초로 진출 성공한, IFBB에서 주최하는 국제보디빌딩 대회</li>
+        </ol>
+      </div>
+      <div class="down">
+        <h3>세로 문제</h3>
+        <ol>
+          <li>미국에서 태어나 한국에서 40년째 거주 중이신, 영어보다 한국말이 편한 일타강사님 성함.</li>
+          <li>3대 운동 중 하나. 데드리프트, 벤치프레스 그리고 이것.</li>
+          <li>앳원스 카페 부동의 소통왕 중 1인, 그림대회에서 손을 못그려 매번 탈락하시는 현 교토 특파원 회원님.</li>
+          <li>특정부위 근육의 활성도와 참여도를 높이는 운동 방식.</li>
+          <li>진공포장된 음식물을 계산된 온도로 천천히 가열하는 조리 방식. 오래된 사람님이 OOO 장인입니다.</li>
+          <li>앳원스 대표(?) 포징이며, 측면의 가슴근육, 이두박근, 종아리 근육을 볼 수 있는 포징자세.</li>
+          <li>넷플릭스에서 방영된, 마선수님의 뛰어난 리더쉽이 화제가 된 프로그램명</li>
+          <li>천재 작곡가 후추님이 작곡하신 "OOO" 자 봐봐~ 봐봐봐~ 운동은 숫자보다 자세가 먼저~~</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <div class="copyright">
+    © 2025. 퍼즐 제공: O Yun, 코드 작성: 후추. All rights reserved.
+  </div>
+
+  <script src="scripts/puzzle.js"></script>
+  <script>
+    const answers = {
+      'h1': ['마', '디', '오', '스', '타'],
+      'h2': ['에', '이', '펙', '스'],
+      'h3': ['쿼', '카'],
+      'h4': ['고', '구', '마'],
+      'h5': ['안', '수', '집', '사'],
+      'h6': ['셀', '렉', '스'],
+      'h7': ['올', '림', '피', '아'],
+      'v1': ['마', '이', '클'],
+      'v2': ['스', '쿼', '트'],
+      'v3': ['로', '즈', '마', '리'],
+      'v4': ['고', '립'],
+      'v5': ['수', '비', '드'],
+      'v6': ['사', '이', '드', '체', '스', '트'],
+      'v7': ['피', '지', '컬', '백'],
+      'v8': ['혜', '정', '아']
+    };
+
+    // 문제별 정보(방향, 번호, 길이, 시작점)
+    const problems = [
+      { dir: 'h', num: '1', len: 5, start: [0, 2] },
+      { dir: 'h', num: '2', len: 4, start: [1, 1] },
+      { dir: 'h', num: '3', len: 2, start: [2, 4] },
+      { dir: 'h', num: '4', len: 3, start: [2, 8] },
+      { dir: 'h', num: '5', len: 4, start: [5, 6] },
+      { dir: 'h', num: '6', len: 3, start: [9, 7] },
+      { dir: 'h', num: '7', len: 4, start: [7, 0] },
+      { dir: 'v', num: '1', len: 3, start: [0, 2] },
+      { dir: 'v', num: '2', len: 3, start: [1, 4] },
+      { dir: 'v', num: '3', len: 4, start: [0, 10] },
+      { dir: 'v', num: '4', len: 2, start: [2, 8] },
+      { dir: 'v', num: '5', len: 3, start: [5, 7] },
+      { dir: 'v', num: '6', len: 6, start: [5, 9] },
+      { dir: 'v', num: '7', len: 4, start: [7, 2] },
+      { dir: 'v', num: '8', len: 3, start: [5, 3] },
+    ];
+
+    // 11x11 grid를 모두 block으로 초기화
+    let grid = Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => ({ block: true })));
+
+    // 문제별로 blank와 h/v 속성 채우기
+    problems.forEach(({ dir, num, len, start }) => {
+      let [y, x] = start;
+      for (let i = 0; i < len; i++) {
+        let cell = grid[y][x];
+        if (cell.block) cell = { blank: true };
+        if (dir === 'h') cell.h = num;
+        if (dir === 'v') cell.v = num;
+        // 시작점에 num도 추가
+        if (i === 0) cell.num = num;
+        grid[y][x] = cell;
+        if (dir === 'h') x++;
+        if (dir === 'v') y++;
+      }
+    });
+
+    // grid를 JS에서 사용할 수 있도록 변환
+    // (아래에서 initializePuzzle(grid, answers)로 사용)
+
+    // 퍼즐 초기화
+    initializePuzzle(grid, answers);
+  </script>
+</body>
+</html> 
