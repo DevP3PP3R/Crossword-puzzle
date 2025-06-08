@@ -178,6 +178,71 @@ function initializePuzzle(grid, answers, secretSequence = null) {
     return cell.num;
   }
 
+  function revealFullAnswerFromStart(td, type, num) {
+    // td가 속한 tr, cellIndex, puzzle 전체 테이블 필요
+    const tr = td.parentElement;
+    const cellIndex = Array.from(tr.children).indexOf(td);
+    let startCell = td;
+    let startTr = tr;
+    let startCellIndex = cellIndex;
+
+    // 시작점(문제 번호가 있는 칸) 찾기
+    if (type === 'h') {
+      let current = td;
+      while (current.previousElementSibling && current.previousElementSibling.classList.contains('blank') && current.previousElementSibling.dataset.h === num) {
+        current = current.previousElementSibling;
+      }
+      startCell = current;
+    } else {
+      let row = tr;
+      let idx = Array.from(puzzle.children).indexOf(row);
+      while (idx > 0) {
+        const prevRow = puzzle.children[idx - 1];
+        const prevCell = prevRow.children[cellIndex];
+        if (prevCell && prevCell.classList.contains('blank') && prevCell.dataset.v === num) {
+          row = prevRow;
+          idx--;
+        } else {
+          break;
+        }
+      }
+      startTr = row;
+      startCell = row.children[cellIndex];
+    }
+
+    // 연결된 모든 칸에 정답 표시 (정확한 위치)
+    const cells = [];
+    if (type === 'h') {
+      let current = startCell;
+      while (current && current.classList.contains('blank') && current.dataset.h === num) {
+        cells.push(current);
+        current = current.nextElementSibling;
+      }
+    } else {
+      let row = startTr;
+      let idx = Array.from(puzzle.children).indexOf(row);
+      while (row) {
+        const cell = row.children[startCellIndex];
+        if (cell && cell.classList.contains('blank') && cell.dataset.v === num) {
+          cells.push(cell);
+          row = row.nextElementSibling;
+        } else {
+          break;
+        }
+      }
+    }
+    const answer = answers[type + num];
+    if (!answer) return;
+    cells.forEach((c, idx) => {
+      const answerSpan = c.querySelector('.answer');
+      if (answerSpan) {
+        answerSpan.textContent = answer[idx];
+        answerSpan.classList.add('show');
+      }
+    });
+    checkAllAnswersRevealed();
+  }
+
   if (horizontalBtn && verticalBtn) {
     horizontalBtn.addEventListener('click', () => {
       if (currentCell && currentCell.h) {
@@ -278,69 +343,4 @@ function initializePuzzle(grid, answers, secretSequence = null) {
     });
     puzzle.appendChild(tr);
   });
-}
-
-function revealFullAnswerFromStart(td, type, num) {
-  // td가 속한 tr, cellIndex, puzzle 전체 테이블 필요
-  const tr = td.parentElement;
-  const cellIndex = Array.from(tr.children).indexOf(td);
-  let startCell = td;
-  let startTr = tr;
-  let startCellIndex = cellIndex;
-
-  // 시작점(문제 번호가 있는 칸) 찾기
-  if (type === 'h') {
-    let current = td;
-    while (current.previousElementSibling && current.previousElementSibling.classList.contains('blank') && current.previousElementSibling.dataset.h === num) {
-      current = current.previousElementSibling;
-    }
-    startCell = current;
-  } else {
-    let row = tr;
-    let idx = Array.from(puzzle.children).indexOf(row);
-    while (idx > 0) {
-      const prevRow = puzzle.children[idx - 1];
-      const prevCell = prevRow.children[cellIndex];
-      if (prevCell && prevCell.classList.contains('blank') && prevCell.dataset.v === num) {
-        row = prevRow;
-        idx--;
-      } else {
-        break;
-      }
-    }
-    startTr = row;
-    startCell = row.children[cellIndex];
-  }
-
-  // 연결된 모든 칸에 정답 표시 (정확한 위치)
-  const cells = [];
-  if (type === 'h') {
-    let current = startCell;
-    while (current && current.classList.contains('blank') && current.dataset.h === num) {
-      cells.push(current);
-      current = current.nextElementSibling;
-    }
-  } else {
-    let row = startTr;
-    let idx = Array.from(puzzle.children).indexOf(row);
-    while (row) {
-      const cell = row.children[startCellIndex];
-      if (cell && cell.classList.contains('blank') && cell.dataset.v === num) {
-        cells.push(cell);
-        row = row.nextElementSibling;
-      } else {
-        break;
-      }
-    }
-  }
-  const answer = answers[type + num];
-  if (!answer) return;
-  cells.forEach((c, idx) => {
-    const answerSpan = c.querySelector('.answer');
-    if (answerSpan) {
-      answerSpan.textContent = answer[idx];
-      answerSpan.classList.add('show');
-    }
-  });
-  checkAllAnswersRevealed();
 } 
