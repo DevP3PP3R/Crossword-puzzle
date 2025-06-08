@@ -81,19 +81,43 @@
       'v7': ['명', '민', '정']
     };
 
-    const grid = [
-      [{num: '1', h: '1', v: '1'}, {blank: true}, {blank: true}, {block: true}, {num: '2', h: '2'}, {blank: true, h: '2'}, {num: '3', h: '3', v: '3'}, {block: true}, {block: true}, {block: true}, {block: true}],
-      [{blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}],
-      [{block: true}, {block: true}, {block: true}, {num: '2', v: '2'}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}],
-      [{block: true}, {block: true}, {block: true}, {num: '3', h: '3'}, {blank: true}, {block: true}, {blank: true},  {block: true}, {num: '5', h: '5', v: '5'}, {blank: true}, {blank: true}],
-      [{block: true}, {block: true}, {num: '4', h: '4', v: '4'}, {blank: true}, {blank: true},  {block: true}, {block: true}, {block: true},{blank: true},  {block: true}, {block: true}, ],
-      [{block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true},{block: true}],
-      [{block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {num: '6', h: '6'}, {num: '7', v: '7'}, {block: true}],
-      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}],
-      [{block: true}, {block: true}, {num: '7', h: '7'},  {blank: true}, {blank: true}, {num: '6', v: '6'},{block: true}, {block: true},  {num: '8', h: '8'}, {blank: true}, {blank: true}],
-      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}],
-      [{block: true}, {block: true}, {block: true}, {block: true}, {block: true}, {blank: true}, {block: true}, {block: true}, {block: true}, {block: true}, {block: true}]
+    // 문제별 정보(방향, 번호, 길이, 시작점)를 담은 problems 배열 추가
+    const problems = [
+      { dir: 'h', num: '1', len: 3, start: [0, 0] },
+      { dir: 'h', num: '2', len: 2, start: [0, 4] },
+      { dir: 'h', num: '3', len: 2, start: [3, 3] },
+      { dir: 'h', num: '4', len: 3, start: [4, 2] },
+      { dir: 'h', num: '5', len: 3, start: [3, 8] },
+      { dir: 'h', num: '6', len: 2, start: [7, 8] },
+      { dir: 'h', num: '7', len: 4, start: [8, 3] },
+      { dir: 'h', num: '8', len: 3, start: [9, 8] },
+      { dir: 'v', num: '1', len: 2, start: [0, 0] },
+      { dir: 'v', num: '2', len: 3, start: [2, 3] },
+      { dir: 'v', num: '3', len: 4, start: [0, 6] },
+      { dir: 'v', num: '4', len: 3, start: [4, 2] },
+      { dir: 'v', num: '5', len: 2, start: [3, 8] },
+      { dir: 'v', num: '6', len: 3, start: [8, 6] },
+      { dir: 'v', num: '7', len: 3, start: [7, 9] }
     ];
+
+    // 11x11 grid를 모두 block으로 초기화
+    let grid = Array.from({ length: 11 }, () => Array.from({ length: 11 }, () => ({ block: true })));
+
+    // problems 배열을 순회하며, 각 문제의 시작점부터 길이만큼 blank와 h/v 속성을 채웁니다.
+    problems.forEach(({ dir, num, len, start }) => {
+      let [y, x] = start;
+      for (let i = 0; i < len; i++) {
+        let cell = grid[y][x];
+        if (cell.block) cell = { blank: true };
+        if (dir === 'h') cell.h = num;
+        if (dir === 'v') cell.v = num;
+        // 시작점에 num도 추가
+        if (i === 0) cell.num = num;
+        grid[y][x] = cell;
+        if (dir === 'h') x++;
+        if (dir === 'v') y++;
+      }
+    });
 
     const secretSequence = ['5', '2', '6'];  // 순서: 5번(오버롤/오윤) -> 2번(울등가/일마원) -> 6번(광명/짐종국)
 
